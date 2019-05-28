@@ -1,6 +1,11 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  Menu
+} from 'electron'
 import {
   createProtocol,
   installVueDevtools
@@ -12,13 +17,23 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{
+  scheme: 'app',
+  privileges: {
+    secure: true,
+    standard: true
+  }
+}])
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
-    nodeIntegration: true
-  } })
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -65,6 +80,10 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate(mainMenuTemplate)
+  )
 })
 
 // Exit cleanly on request from parent process in development mode.
@@ -81,3 +100,38 @@ if (isDevelopment) {
     })
   }
 }
+
+
+
+const mainMenuTemplate = [{
+  label: 'File',
+  submenu: [{
+    label: 'Quit',
+    accelerator: process.platform == 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
+    click() {
+      app.quit()
+    },
+  }, ],
+}, ]
+
+if (process.platform === 'darwin')
+  mainMenuTemplate.unshift({
+    label: '',
+  })
+
+if (process.env.NODE_ENV != 'production')
+  mainMenuTemplate.push({
+    label: 'Dev',
+    submenu: [{
+        label: 'Toggle dev tools',
+        accelerator: process.platform == 'darwin' ? 'Cmd+I' : 'Ctrl+I',
+
+        click(item, focusWindow) {
+          focusWindow.toggleDevTools()
+        },
+      },
+      {
+        role: 'reload',
+      },
+    ],
+  })

@@ -1,64 +1,58 @@
 <template>
     <div class="page-container">
-        <md-app md-mode="reveal">
+        <md-app md-mode="fixed">
             <md-app-toolbar class="md-primary">
                 <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
-                    <md-icon>menu</md-icon>
+                    <menu-icon />
                 </md-button>
-                <span class="md-title">My Title</span>
+                <span class="md-title">Dofus Connect</span>
             </md-app-toolbar>
 
             <md-app-drawer :md-active.sync="menuVisible">
-                <md-toolbar class="md-transparent" md-elevation="0">Navigation</md-toolbar>
+                <md-toolbar class="md-transparent" md-elevation="0">Menu</md-toolbar>
 
-                <md-list>
-                    <md-list-item>
-                        <md-icon>move_to_inbox</md-icon>
-                        <span class="md-list-item-text">Inbox</span>
-                    </md-list-item>
+                <md-list-item>
+                    <face-icon />
+                    <span class="md-list-item-text">Connection de compte</span>
 
-                    <md-list-item>
-                        <md-icon>send</md-icon>
-                        <span class="md-list-item-text">Sent Mail</span>
-                    </md-list-item>
+                </md-list-item>
 
-                    <md-list-item>
-                        <md-icon>delete</md-icon>
-                        <span class="md-list-item-text">Trash</span>
-                    </md-list-item>
-
-                    <md-list-item>
-                        <md-icon>error</md-icon>
-                        <span class="md-list-item-text">Spam</span>
-                    </md-list-item>
-                </md-list>
             </md-app-drawer>
 
-            <md-app-content>
-                <p>Content</p>
-            </md-app-content>
+
+            <md-app-content></md-app-content>
         </md-app>
     </div>
 </template>
 
 <script>
-export default {
-    name: "Index",
-    data() {
-        return {
-            menuVisible: false
-        };
-    }
-};
+    import MenuIcon from 'vue-material-design-icons/Menu.vue'
+    import FaceIcon from 'vue-material-design-icons/Face.vue'
+
+    export default {
+        name: "Index",
+        components: {
+            MenuIcon,
+            FaceIcon
+        },
+        data() {
+            return {
+                menuVisible: false
+            };
+        }
+    };
 </script>
 
-<style lang="css" scoped>
-.md-app {
-    border: 1px solid rgba(#000, 0.12);
-}
+<style lang="scss" scoped>
+    .md-list-item {
+        list-style-type: none;
+    }
 
-.md-drawer {
-    width: 230px;
-    max-width: calc(100vw - 125px);
-}
+    .md-app-content {
+        height: 100vh;
+    }
+
+    .md-app-drawer {
+        height: 50vh;
+    }
 </style>
