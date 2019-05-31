@@ -44,14 +44,14 @@ export default class IdentifiactionFrame {
     ) {
 
 
-        account.setNetworkPhase(NetworkPhases.LOGIN);
+        account.network.phase = NetworkPhases.LOGIN;
 
-        account.getFramesData().setKey(message.key);
-        account.getFramesData().setSalt(message.salt);
+        account.framesData.key = message.key
+        account.framesData.salt = message.salt
 
         console.log("Connecté au serveur d'authentification");
 
-        account.getNetworkContext().send("checkAssetsVersion", {
+        account.network.send("checkAssetsVersion", {
             assetsVersion: this.config.assetsVersion,
             staticDataVersion: this.config.staticDataVersion
         });
@@ -60,12 +60,12 @@ export default class IdentifiactionFrame {
     async HandleassetsVersionChecked(account, message) {
         console.log("envois des parametres de connexion...");
 
-        account.getNetworkContext().send("login", {
-            key: account.getFramesData().getKey(),
-            salt: account.getFramesData().getSalt(),
-            token: account.getHaapiToken(),
-            username: account.getAccountConfig()[0].username
-        });
+        account.network.send('login', {
+            key: account.framesData.key,
+            salt: account.framesData.salt,
+            token: account.haapi.getGeneratedToken(),
+            username: account.accountConfig[0].username,
+        })
     }
     async HandleConnectionFailedMessage(
         account,
@@ -101,19 +101,17 @@ export default class IdentifiactionFrame {
         account,
         message
     ) {
-        account.setData({
-            accountCreation: message.accountCreation,
-            accountId: message.accountId,
-            communityId: message.communityId,
-            hasRights: message.hasRights,
-            login: message.login,
-            nickname: message.nickname,
-            secretQuestion: message.secretQuestion,
-            subscriptionEndDate: message.subscriptionEndDate === 0 ?
-                undefined : moment()
-                .add(message.subscriptionEndDate - Date.now(), "ms")
-                .toDate(),
-            wasAlreadyConnected: message.wasAlreadyConnected,
-        })
+        account.data.accountCreation = message.accountCreation
+        account.data.accountId = message.accountId
+        account.data.communityId = message.communityId
+        account.data.hasRights = message.hasRights
+        account.data.login = message.login
+        account.data.nickname = message.nickname
+        account.data.secretQuestion = message.secretQuestion
+        account.data.subscriptionEndDate = message.subscriptionEndDate === 0 ?
+            undefined : moment()
+            .add(message.subscriptionEndDate - Date.now(), "ms")
+            .toDate()
+        account.data.wasAlreadyConnected = message.wasAlreadyConnected
     }
 }

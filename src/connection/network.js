@@ -14,14 +14,6 @@ export default class Network {
         this.account = account
     }
 
-    getPhase() {
-        return this.phase
-    }
-
-    setPhase(value) {
-        this.phase = value
-    }
-
 
     connect() {
         let url = this.data.config.dataUrl
@@ -95,10 +87,26 @@ export default class Network {
         }
 
 
-        this.frames.getDispatcher().emit(msgName, this.account, data);
+        this.frames.dispatcher.emit(msgName, this.account, data);
         this.socket.write(msg);
 
     }
+
+    switchToGameServer(url, server) {
+        this.server = server;
+        if (!this.connected || this.phase !== NetworkPhases.LOGIN) {
+            return;
+        }
+        this.phase = NetworkPhases.SWITCHING_TO_GAME;
+        this.send("disconnecting", "SWITCHING_TO_GAME");
+        this.socket.destroy();
+        const currentUrl = this.makeSticky(url, this.sessionId);
+        console.log("Connexion au jeu");
+        this.socket = this.createSocket(currentUrl);
+        this.setCurrentConnection();
+        this.socket.open();
+    }
+
     sendMessageFree(messageName, data) {
 
         this.send("sendMessage", {
@@ -144,13 +152,7 @@ export default class Network {
             console.log("msg recu!");
             console.log(data);
 
-            this.frames.getDispatcher().emit(data._messageType, this.account, data);
-            for (const rm of this._registeredMessages.values()) {
-                if (rm.name !== data._messageType) {
-                    continue;
-                }
-                rm.action(this.account, data);
-            }
+            this.frames.dispatcher.emit(data._messageType, this.account, data);
 
         })
         this.socket.on('error', function (error) {
