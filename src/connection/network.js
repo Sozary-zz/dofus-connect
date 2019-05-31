@@ -1,26 +1,38 @@
 const NetworkPhases = require('./networkPhases')
-var io = require('socket.io-client')
-var Primus = require('./primus.js')
-var EventEmitter = require('events').EventEmitter
+
+
+var EventEmitter = require("events").EventEmitter;
 
 export default class Network {
-    constructor(data) {
-
+    constructor(data, frames, account) {
+        this._registeredMessages = new Map();
         this.data = data
         this.connected = false
+        this.server = null
         this.phase = NetworkPhases.NONE
+        this.frames = frames
+        this.account = account
     }
-    connect(sessionId) {
+
+    getPhase() {
+        return this.phase
+    }
+
+    setPhase(value) {
+        this.phase = value
+    }
+
+
+    connect() {
         let url = this.data.config.dataUrl
         if (this.connected || this.phase !== NetworkPhases.NONE) {
             return
         }
 
-        this.sessionId = sessionId
+        this.sessionId = this.data.config.sessionId
         const currentUrl = this.makeSticky(url, this.sessionId)
-        console.log(currentUrl);
 
-        console.log("Connexion au serveur d 'authentification");
+        console.log("Connexion au proxy");
 
         this.socket = this.createSocket(currentUrl)
         this.setCurrentConnection()
@@ -41,10 +53,6 @@ export default class Network {
     }
 
     createSocket(url) {
-        // return new io(url, {
-        //     path: "/primus"
-        // })
-
         return new Primus(url, {
             manual: true,
             strategy: 'disconnect,timeout',
@@ -56,15 +64,95 @@ export default class Network {
         })
 
     }
+
+    send(call, data) {
+        if (!this.connected) {
+            return;
+        }
+
+        let msg;
+        let msgName;
+
+        if (call === "sendMessage") {
+            msgName = data.type;
+            msg = data.data ? {
+                call,
+                data
+            } : {
+                call,
+                data: {
+                    type: data.type
+                }
+            };
+        } else {
+            msgName = call;
+            msg = data ? {
+                call,
+                data
+            } : {
+                call
+            };
+        }
+
+
+        this.frames.getDispatcher().emit(msgName, this.account, data);
+        this.socket.write(msg);
+
+    }
+    sendMessageFree(messageName, data) {
+
+        this.send("sendMessage", {
+            type: messageName,
+            data
+        });
+    }
+    close() {
+        if (!this.connected) {
+            return;
+        }
+
+        if (this.socket) {
+            this.socket.destroy();
+        }
+    }
     setCurrentConnection() {
         this.socket.on('open', () => {
             console.log('Connection opened !')
 
-        })
-        this.socket.on('data', function (data) {
-            console.log("msg recu");
+            this.connected = true;
+            if (this.phase === NetworkPhases.NONE) {
 
-        }) //todo gérer la reconnection avec primus il semble y avoir deux trois trucs a faire
+                this.send("connecting", {
+                    appVersion: this.data.appVersion,
+                    buildVersion: this.data.buildVersion,
+                    client: "ios",
+                    language: "fr",
+                    server: "login"
+                });
+            } else {
+                this.send("connecting", {
+                    appVersion: this.data.appVersion,
+                    buildVersion: this.data.buildVersion,
+                    client: "ios",
+                    language: "fr",
+                    server: this.server
+                });
+            }
+
+        })
+        this.socket.on('data', (data) => {
+            console.log("msg recu!");
+            console.log(data);
+
+            this.frames.getDispatcher().emit(data._messageType, this.account, data);
+            for (const rm of this._registeredMessages.values()) {
+                if (rm.name !== data._messageType) {
+                    continue;
+                }
+                rm.action(this.account, data);
+            }
+
+        })
         this.socket.on('error', function (error) {
             console.log('[Primus error]' + error)
         })
@@ -90,7 +178,7 @@ export default class Network {
 
         })
         this.socket.on('end', function () {
-            console.log('Prmus close connection !')
+            console.log('Primus close connection !')
 
         })
     }

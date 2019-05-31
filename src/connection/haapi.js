@@ -1,8 +1,4 @@
 const axios = require("axios")
-import {
-    GameConst
-} from './gameConst'
-
 export default class HaapiConnection {
     constructor(login, pass, server, pseudo, data) {
         this.login = login
@@ -11,6 +7,9 @@ export default class HaapiConnection {
         this.pseudo = pseudo
         this.axios = axios.create({})
         this.consts = data
+    }
+    getGeneratedToken() {
+        return this.token
     }
 
     async start() {
