@@ -149,8 +149,7 @@ export default class Network {
 
         })
         this.socket.on('data', (data) => {
-            console.log("msg recu!");
-            console.log(data);
+            console.log(`[SERVER] => ${data._messageType}`);
 
             this.frames.dispatcher.emit(data._messageType, this.account, data);
 

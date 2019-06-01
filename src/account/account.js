@@ -2,6 +2,9 @@ import HaapiConnection from "./../connection/haapi.js";
 import Network from "./../connection/network.js";
 import FramesData from "./../frames/framesdata"
 import Game from "./../game/game"
+import AccountStats from "./accountstats"
+import Extensions from "./../extensions/extensions"
+import Configuration from "./configuration/configuration"
 
 export default class Account {
 
@@ -9,8 +12,10 @@ export default class Account {
 
         this.accountConfig = accountConfig
         this.constConfig = constConfig
-        this.stats = null
         this.game = new Game(this)
+        this.config = new Configuration(this)
+        this.extensions = new Extensions(this)
+        this.stats = new AccountStats(this)
         this.network = new Network(constConfig, frames, this)
         this.haapi = new HaapiConnection(
             accountConfig[0].username,

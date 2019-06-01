@@ -1,6 +1,7 @@
 import Dispatcher from "./dispatcher"
-import IdentifiactionFrame from "./identificationFrame"
+import IdentifiactionFrame from "./identificationframe"
 import ServerSelectionFrame from './serverselectionframe'
+import CharacterSelectionFrame from './characterselectionframe'
 
 export default class Frames {
     constructor(config) {
@@ -9,6 +10,7 @@ export default class Frames {
         this.frames = [
             new IdentifiactionFrame(this.dispatcher, config),
             new ServerSelectionFrame(this.dispatcher, config),
+            new CharacterSelectionFrame(this.dispatcher, config),
         ]
 
         this.init()

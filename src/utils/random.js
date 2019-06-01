@@ -1,5 +1,3 @@
-export default
-
 function randomString(len, bits = 36) {
     let outStr = ''
     let newStr
@@ -10,4 +8,8 @@ function randomString(len, bits = 36) {
         outStr += newStr.slice(0, Math.min(newStr.length, len - outStr.length))
     }
     return outStr.toUpperCase()
+}
+
+export {
+    randomString
 }
