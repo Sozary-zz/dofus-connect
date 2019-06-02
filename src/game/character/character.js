@@ -9,7 +9,7 @@ import DataTypes from './../../protocol/data/datatypes'
 export default class Character {
     constructor(account) {
         this.account = account
-
+        this.id = 0
         this.stats = new CharacterStats()
         this.spells = []
         this.mount = new Mount(account)

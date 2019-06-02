@@ -1,10 +1,12 @@
 import Server from "./server/server"
 import Character from "./character/character"
+import Map from "./map/map"
+
 export default class Game {
     constructor(account) {
         this.server = new Server(account)
         this.character = new Character(account)
-        // this.map = new Map(account)
+        this.map = new Map(account)
         // this.fight = new Fight(account)
         // this.managers = new Managers(
         //     account,

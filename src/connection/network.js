@@ -150,6 +150,7 @@ export default class Network {
         })
         this.socket.on('data', (data) => {
             console.log(`[SERVER] => ${data._messageType}`);
+            // console.log(data);
 
             this.frames.dispatcher.emit(data._messageType, this.account, data);
 
