@@ -1,6 +1,5 @@
 import CellData from "./celldata"
 import MapPoint from "./mappoint"
-import Cell from "./../../protocol/data/map/cell"
 
 export default class Pathfinder {
     constructor() {
