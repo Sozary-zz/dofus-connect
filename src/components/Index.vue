@@ -13,22 +13,32 @@
 
                 <md-list-item>
                     <span class="md-list-item-text">
-                        <md-button
-                            to="/components/tabs"
-                            @click="connectionPromptActive = true"
-                        >Connexion</md-button>
+                        <md-button>Menu</md-button>
                     </span>
                 </md-list-item>
             </md-app-drawer>
 
             <md-app-content>
                 <transition name="fade" mode="out-in">
-                    <users-bi v-if="user_view == 'list' && !loading"></users-bi>
-
-                    <user-edit-bi v-if="user_view == 'edit' && !loading"></user-edit-bi>
+                    <md-tabs>
+                        <md-tab id="tab-connect" md-label="Connection" exact>
+                            <Connection @connect_account="connect_account"></Connection>
+                        </md-tab>
+                        <md-tab id="tab-map" md-label="Map" exact>
+                            <MapViewer></MapViewer>
+                        </md-tab>
+                        <md-tab id="tab-settings" md-label="Settings">
+                            <Settings></Settings>
+                        </md-tab>
+                    </md-tabs>
                 </transition>
             </md-app-content>
         </md-app>
+        <div id="loader" v-if="loading">
+            <transition name="fade" mode="out-in">
+                <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+            </transition>
+        </div>
     </div>
 </template>
 
@@ -37,44 +47,59 @@ import MenuIcon from "vue-material-design-icons/Menu.vue";
 import GameConst from "./../connection/gameConst.js";
 import Account from "./../account/account.js";
 import Frames from "./../frames/frames";
+import Settings from "./Settings";
+import MapViewer from "./MapViewer";
+import Connection from "./Connection";
+
 import { networkInterfaces } from "os";
 export default {
     name: "Index",
     components: {
-        MenuIcon
+        MenuIcon,
+        Settings,
+        MapViewer,
+        Connection
     },
     data() {
         return {
             connectionPromptActive: false,
             menuVisible: false,
             loading: false,
-            user_view: null
+            consts: null,
+            frames: null,
+            account: null,
+            config: null
         };
     },
+    methods: {
+        connect_account: async function(accountConfig) {
+            this.loading = true;
+            this.account = new Account(
+                [
+                    {
+                        username: accountConfig.username,
+                        password: accountConfig.password,
+                        server: accountConfig.server,
+                        character: accountConfig.character
+                    }
+                ],
+                this.config,
+                this.frames
+            );
+
+            await this.account.connect();
+            this.loading = false;
+        }
+    },
     async mounted() {
-        let consts = new GameConst();
-        let frames = null;
-        let account = null;
-        let config = null;
+        this.consts = new GameConst();
+        this.frames = null;
+        this.account = null;
+        this.config = null;
 
-        config = await consts.init(); // on charge les constantes
+        this.config = await consts.init(); // on charge les constantes
 
-        frames = new Frames(config);
-
-        account = new Account(
-            [
-                {
-                    username: "krapastagnette",
-                    password: "krapazor84",
-                    server: "Herdegrize",
-                    character: "Dark-aro"
-                }
-            ],
-            config,
-            frames
-        );
-
-        await account.connect();
+        this.frames = new Frames(config);
     }
 };
 </script>
