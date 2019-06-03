@@ -13,5 +13,8 @@ export default class MapPoint {
         return cell === undefined ? null : cell;
     }
 
-    
+    static fromCellId(cellId) {
+        return this.cells.find(cell => cell.cellId === cellId) || null;
+    }
+
 }
