@@ -15,7 +15,12 @@
                     <div class="md-layout-item md-small-size-100">
                         <md-field>
                             <label for="password">Password</label>
-                            <md-input name="password" id="password" v-model="account.password"/>
+                            <md-input
+                                name="password"
+                                id="password"
+                                type="password"
+                                v-model="account.password"
+                            />
                         </md-field>
                     </div>
                 </div>
@@ -40,7 +45,7 @@
                 </div>
             </md-card-content>
             <md-card-actions>
-                <md-button @click="sendDefault()" class="md-default">Connect default account</md-button>
+                <md-button @click="sendDefault()" class="md-default">Default account</md-button>
                 <md-button type="submit" class="md-primary">Connect this account</md-button>
             </md-card-actions>
         </md-card>
@@ -59,12 +64,12 @@ export default {
             this.$emit("connect_account", this.account);
         },
         sendDefault: function() {
-            this.$emit("connect_account", {
+            this.account = {
                 username: "krapastagnette",
                 password: "krapazor84",
                 server: "Herdegrize",
                 character: "Dark-aro"
-            });
+            };
         }
     },
     mounted() {}

@@ -1,5 +1,10 @@
 <template>
     <div class="page-container">
+        <div class="spinner" v-if="loading">
+            <transition name="fade">
+                <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+            </transition>
+        </div>
         <md-app md-mode="fixed">
             <md-app-toolbar class="md-primary">
                 <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
@@ -21,7 +26,7 @@
             <md-app-content>
                 <transition name="fade" mode="out-in">
                     <md-tabs>
-                        <md-tab id="tab-connect" md-label="Connection" exact>
+                        <md-tab id="tab-connect" md-label="Connection">
                             <Connection @connect_account="connect_account"></Connection>
                         </md-tab>
                         <md-tab id="tab-map" md-label="Map" exact>
@@ -34,11 +39,6 @@
                 </transition>
             </md-app-content>
         </md-app>
-        <div id="loader" v-if="loading">
-            <transition name="fade" mode="out-in">
-                <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
-            </transition>
-        </div>
     </div>
 </template>
 
@@ -65,7 +65,6 @@ export default {
             connectionPromptActive: false,
             menuVisible: false,
             loading: false,
-            consts: null,
             frames: null,
             account: null,
             config: null
@@ -92,14 +91,9 @@ export default {
         }
     },
     async mounted() {
-        this.consts = new GameConst();
-        this.frames = null;
-        this.account = null;
-        this.config = null;
+        this.config = await new GameConst().init(); // on charge les constantes
 
-        this.config = await consts.init(); // on charge les constantes
-
-        this.frames = new Frames(config);
+        this.frames = new Frames(this.config);
     }
 };
 </script>
@@ -111,5 +105,31 @@ export default {
 
 .md-app-content {
     height: 100vh;
+}
+.spinner {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgb(56, 56, 56);
+    background-color: rgb(66, 66, 66);
+    box-shadow: 0 0 10px rgb(48, 48, 48);
+    padding: 20px;
+    border-radius: 100%;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-leave,
+.fade-enter-to {
+    opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 300ms;
 }
 </style>
