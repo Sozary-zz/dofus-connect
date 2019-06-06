@@ -1,19 +1,18 @@
 <template>
     <div class="page">
-        <index />
+        <index/>
     </div>
 </template>
 
 <script>
-    import Index from "@/components/Index.vue";
+import Index from "@/components/Index.vue";
 
-    export default {
-        name: "page",
-        components: {
-            Index
-        }
-    };
+export default {
+    name: "page",
+    components: {
+        Index
+    }
+};
 </script>
 <style>
-
 </style>

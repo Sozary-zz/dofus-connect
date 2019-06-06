@@ -43,6 +43,8 @@
 </template>
 
 <script>
+const electron = require("electron");
+const { ipcRenderer } = electron;
 import MenuIcon from "vue-material-design-icons/Menu.vue";
 import GameConst from "./../connection/gameConst.js";
 import Account from "./../account/account.js";
@@ -92,6 +94,7 @@ export default {
     },
     async mounted() {
         this.config = await new GameConst().init(); // on charge les constantes
+        ipcRenderer.send("app:mounted");
 
         this.frames = new Frames(this.config);
     }

@@ -4,8 +4,10 @@ import {
   app,
   protocol,
   BrowserWindow,
-  Menu
+  Menu,
+  ipcMain
 } from 'electron'
+import DofusManager from "./dofusmanager.js"
 import {
   createProtocol,
   installVueDevtools
@@ -15,6 +17,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+var dofusManager = new DofusManager()
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{
@@ -135,3 +138,8 @@ if (process.env.NODE_ENV != 'production')
       },
     ],
   })
+
+ipcMain.on("app:mounted", async (e, item) => {
+  await dofusManager.init()
+  ipcMain.webContents.send("app:mounted:end")
+})
