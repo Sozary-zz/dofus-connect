@@ -16,7 +16,9 @@ export default class GameConst {
             appVersion: this.appVersion,
             buildVersion: this.buildVersion,
             assetsVersion: this.assetsVersion,
-            staticDataVersion: this.staticDataVersion
+            staticDataVersion: this.staticDataVersion,
+            MAP_WIDTH: constants.MAP_WIDTH,
+            MAP_HEIGHT: constants.MAP_HEIGHT,
         }
     }
     async getAssetsVersions() {

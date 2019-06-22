@@ -141,5 +141,5 @@ if (process.env.NODE_ENV != 'production')
 
 ipcMain.on("app:mounted", async (e, item) => {
   await dofusManager.init()
-  ipcMain.webContents.send("app:mounted:end")
+  win.webContents.send("app:mounted:end")
 })

@@ -53,6 +53,7 @@ export default class MapsFrames {
         await account.game.map.UpdateMapComplementaryInformationsDataMessage(
             message
         )
+        account.mapLoadedEvent(account.game.map.data)
         account.network.sendMessageFree(
             'CharacterExperienceGainMessage', {
                 experienceCharacter: 1200,

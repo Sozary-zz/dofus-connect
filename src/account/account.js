@@ -8,9 +8,10 @@ import Configuration from "./configuration/configuration"
 
 export default class Account {
 
-    constructor(accountConfig, constConfig, frames) {
+    constructor(accountConfig, constConfig, frames, mapLoadedEvent) {
 
         this.accountConfig = accountConfig
+        this.mapLoadedEvent = mapLoadedEvent
         this.constConfig = constConfig
         this.game = new Game(this)
         this.config = new Configuration(this)
