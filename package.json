@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
-    "https-proxy-agent": "^2.2.1",
+    "https-proxy-agent": "^2.2.3",
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
     "navigator": "^1.0.1",
